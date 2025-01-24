@@ -1,66 +1,151 @@
-# Terraform AWS
+# AWS AppStream 2.0 Infrastructure Setup with Terraform
 
-# Infrastructure as Code with Terraform
-This Terraform configuration defines the infrastructure for an AWS environment. It sets up a Virtual Private Cloud (VPC), subnets, route tables, NAT gateway, VPC endpoints, security groups, FSx Windows File System, and Microsoft Active Directory Service.
+This repository contains Terraform code to provision an AWS infrastructure for an AppStream 2.0 environment. It includes the setup of VPCs, subnets, NAT gateways, security groups, AppStream resources (Image Builders, Fleets, and Stacks), and integration with AWS Directory Service and FSx for Windows File Server.
+
+---
+
+## Features
+
+### VPC Setup
+
+    . Creation of a custom VPC with CIDR block 10.0.0.0/20
+
+    . Public and private subnets across multiple availability zones
+
+    . Internet Gateway (IGW) for internet access
+
+    . NAT Gateway for private subnets' internet connectivity
+
+### AppStream 2.0 Resources
+
+    . Image Builder for creating custom AppStream images
+
+    . Fleet for managing AppStream instances
+
+    . Stack for application deployment and user access
+
+### Directory Services
+
+    . Integration with AWS Directory Service (Microsoft AD)
+
+    . Configuration of FSx for Windows File Server for shared storage
+
+### Security
+
+Security group with ingress and egress rules for AppStream endpoints
+
+Route table associations for public and private subnets
+
+---
 
 ## Prerequisites
-    Install Terraform (installation guide)
-    AWS account with appropriate permissions
-    AWS CLI configured (installation guide)
-Usage
-Clone this repository to your local machine.
-Navigate to the directory containing the Terraform configuration files.
-Initialize the Terraform working directory by running:
-csharp
-Copy code
-terraform init
-Review and customize the terraform.tfvars file with your AWS credentials and any other required variables.
-Plan the Terraform execution to review the changes that will be applied:
-Copy code
-terraform plan
-Apply the Terraform configuration to create the infrastructure:
-Copy code
-terraform apply
-Enter yes when prompted to confirm the execution.
-Once the execution is complete, Terraform will output the details of the created resources.
-Cleanup
-To destroy the infrastructure and delete all resources created by Terraform, run:
 
-Copy code
-terraform destroy
-Enter yes when prompted to confirm the destruction.
+Before deploying this infrastructure, ensure you have the following:
 
-## Documentation
+1. Terraform: Install Terraform CLI version 1.x or higher.
 
-### 1. Terraform Configuration Files
-main.tf: Defines the AWS resources such as VPC, subnets, route tables, NAT gateway, endpoints, security groups, FSx Windows File System, and Microsoft Active Directory Service.
-variables.tf: Declares input variables used in the Terraform configuration.
-terraform.tfvars: Contains values for the input variables. Customize this file with your AWS credentials and any other required variables.
-### 2. Prerequisites
-Ensure you have the following prerequisites set up before using this Terraform configuration:
+2. AWS Account: Ensure your AWS account has sufficient permissions to create resources (VPC, Subnets, AppStream, Directory Service, FSx, etc.).
 
-Terraform installed on your local machine.
-AWS account with appropriate permissions.
-AWS CLI configured with access keys.
+3. AWS CLI: Set up and configure the AWS CLI with appropriate credentials.
 
-### 3. Usage Instructions
-Follow these steps to deploy the infrastructure using Terraform:
-Clone this repository to your local machine.
-Navigate to the directory containing the Terraform configuration files.
-Initialize Terraform by running terraform init.
-Customize the terraform.tfvars file with your AWS credentials and any other required variables.
-Plan the execution by running terraform plan to review the changes.
-Apply the configuration using terraform apply and confirm the changes.
-After deployment, Terraform will output the details of the created resources.
+4. Key Information: Update the provider block in the code with your AWS access_key and secret_key or configure it using environment variables.
 
-### 4. Cleanup Instructions
-To destroy the infrastructure and delete all resources created by Terraform, run terraform destroy and confirm the destruction.
+---
 
-### 5. Notes
-Ensure sensitive information like passwords and AWS access keys are managed securely.
-Customize the configuration according to your specific requirements and security considerations.
+## Deployment Instructions
 
-### 6. Contact
-For any questions or issues, please contact Your Name.
+1. Clone the Repository:
 
-Feel free to customize the code and the documentation further to suit your project's needs.
+    git clone <repository-url>
+    cd <repository-folder>
+
+2. Initialize Terraform:
+Run the following command to initialize the Terraform workspace and download provider plugins:
+
+    terraform init
+
+3. Plan the Infrastructure:
+Review the changes that Terraform will make to your AWS environment:
+
+    terraform plan
+
+4. Apply the Infrastructure:
+Deploy the infrastructure by running:
+
+    terraform apply
+
+Type yes when prompted to confirm.
+
+5. Verify Deployment:
+
+    . Log in to the AWS Management Console.
+
+    . Navigate to the VPC, AppStream, Directory Service, and FSx sections to confirm the resources have been created successfully.
+
+---
+
+## Resources Created
+
+### VPC and Subnets
+
+#### VPC:
+
+    CIDR Block: 10.0.0.0/20
+
+#### Subnets:
+
+    Public Subnet: 10.0.0.0/24 (AZ: us-east-1a)
+
+    Private Subnet 1: 10.0.1.0/24 (AZ: us-east-1b)
+
+    Private Subnet 2: 10.0.2.0/24 (AZ: us-east-1c)
+
+. Internet Gateway: Enables public internet access for the public subnet.
+
+. NAT Gateway: Provides internet access for resources in private subnets.
+
+### AppStream Resources
+
+1. Image Builder:
+
+    Name: terra-Icobatch
+
+    Instance Type: stream.standard.medium
+
+2. Fleet:
+
+Name: fleet-icobatch-automate
+
+Instance Type: stream.standard.medium
+
+Fleet Type: ON_DEMAND
+
+3. Stack:
+
+Name: stacks-automatise-icobatch
+
+Configured user settings for clipboard, file upload/download, and local printing.
+
+4. Fleet-Stack Association:
+
+Associates the fleet with the stack.
+
+### Directory Service and FSx
+
+#### AWS Directory Service (Microsoft AD):
+
+    Name: sucess.com
+
+    Edition: Standard
+
+#### FSx for Windows File Server:
+
+    Storage Capacity: 100 GiB
+
+    Throughput: 1024 MBps
+
+#### Security
+
+    . Security group for AppStream S3 endpoints.
+
+    . Gateway and Interface VPC endpoints for S3 connectivity.
